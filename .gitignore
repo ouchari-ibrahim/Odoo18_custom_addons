@@ -1,0 +1,41 @@
+# Ignore Python compiled files
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore Odoo temporary and log files
+*.log
+*.swp
+*.swo
+*.bak
+
+# Ignore Git conflict files
+*.diff
+*.patch
+*.orig
+
+# Ignore Odoo build/static files
+*.zip
+*.tar.gz
+*.egg
+*.egg-info/
+*.log
+
+# Ignore database backups
+*.dump
+*.sql
+*.db
+
+# Ignore editor/project-specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.DS_Store
+*.iml
+
+
+
+# Allow your custom modules
+custom_modules/
+odoo18/addons/
