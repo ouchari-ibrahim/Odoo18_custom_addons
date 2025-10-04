@@ -1,0 +1,247 @@
+<odoo>
+    <template id="invoice_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id"/>
+                <t t-call="web.external_layout_standard">
+                    <div class="page" style="page-break-inside: avoid;">
+
+                        <div class="row justify-content-between">
+                            <div class="col-md-5 col-6 p-2"
+                                 style="font-size: 1.2rem; line-height: 1.5; border: 2px solid black; border-radius: 16px; background-color: #f9f9f9;">
+                                <div>
+                                    <strong>Facture :</strong>
+                                    <span t-field="o.name"/>
+                                </div>
+                                <div>
+                                    <strong>Date de Facture :</strong>
+                                    <span t-field="o.invoice_date"/>
+                                </div>
+                                <div>
+                                    <strong>Affaire suivie par :</strong>
+                                    <span t-field="user.name"/>
+                                </div>
+                            </div>
+                            <div class="col-md-5 col-5 p-2"
+                                 style="font-size: 1.2rem; line-height: 1.5; border: 2px solid black; border-radius: 8px; background-color: #f9f9f9;">
+                                <div>
+                                    <strong>A l'attention de :</strong>
+                                    <span t-field="o.partner_id.name"/>
+                                </div>
+                                <div>
+                                    <strong>Prospect :</strong>
+                                    <span t-if="o.partner_id.phone" t-field="o.partner_id.phone"/>
+                                    <span t-else="" t-field="o.partner_id.mobile"/>
+                                </div>
+                                <div>
+                                    <strong>ID fiscale :</strong>
+                                    <span t-field="o.partner_id.vat"/>
+                                </div>
+                                <div>
+                                    <strong>Téléphone :</strong>
+                                    <span t-field="o.partner_id.phone"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Lines Table -->
+                        <table class="table table-sm mt-4"
+                               style="width: 100%;
+              border-collapse: separate;
+              border-spacing: 0;
+              border-radius: 18px;
+              font-size: 0.9rem;
+              border: 3px solid black;
+              overflow: hidden;">
+                            <style>
+                                .table tr {
+                                border: none !important;
+                                }
+                                .table td {
+                                border-top: none !important;
+                                border-bottom: none !important;
+                                }
+                            </style>
+                            <thead>
+                                <tr>
+                                    <th style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        Ref
+                                    </th>
+                                    <th t-if="not o.report_without_image"
+                                                style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                                Image
+                                            </th>
+
+                                    <th style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        Designation
+                                    </th>
+                                    <th class="text-right"
+                                        style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        Qte
+                                    </th>
+                                    <th class="text-right"
+                                        style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        PUHT
+                                    </th>
+                                    <th class="text-right"
+                                        style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        Rem %
+                                    </th>
+                                    <th class="text-right"
+                                        style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        PU NET HT
+                                    </th>
+                                    <th class="text-right"
+                                        style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        Mnt NET HT
+                                    </th>
+                                    <th class="text-right"
+                                        style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                        TVA (%)
+                                    </th>
+                                    <th class="text-right" style="border-bottom: 2px solid black; padding: 8px;">Mnt
+                                        TTC
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.invoice_line_ids" t-as="line" t-if="line.product_id"
+                                    style="border: none;">
+                                    <td style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-field="line.product_id.default_code"/>
+                                    </td>
+
+
+                                            <td t-if="not o.report_without_image"
+                                                style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                                <t t-if="line.product_id.image_1920">
+                                                    <img
+                                                        t-att-src="image_data_uri(line.product_id.image_1920)"
+                                                        style="max-height: 40pt; max-width: 100%;"
+                                                        alt="Product Logo" />
+                                                </t>
+                                            </td>
+
+                                    <td style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-field="line.product_id.description"/>
+                                    </td>
+                                    <td class="text-right"
+                                        style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-field="line.quantity"/>
+                                    </td>
+                                    <td class="text-right"
+                                        style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-field="line.price_unit"/>
+                                    </td>
+                                    <td class="text-right"
+                                        style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-field="line.discount" t-options='{"widget": "float", "precision": 0}'/>%
+                                    </td>
+                                    <td class="text-right"
+                                        style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-esc="line.price_unit * (1 - (line.discount or 0.0) / 100.0)"
+                                              t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td class="text-right"
+                                        style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-field="line.price_subtotal"/>
+                                    </td>
+                                    <td class="text-right"
+                                        style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                        <span t-esc="line.tax_ids[0].amount if line.tax_ids else 0"
+                                              t-options='{"widget": "float", "precision": 0}'/>
+                                    </td>
+                                    <td class="text-right" style="padding: 2px; border-top: none; border-bottom: none;">
+                                        <span t-field="line.price_total"
+                                              t-options='{"widget": "float", "precision": 3}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Totals Section -->
+                        <div class="row justify-content-between">
+                            <div class="col-md-1 col-5 p-1 "
+                                 style="border: 2px solid black; border-radius: 8px; background-color: #f0f3f4;height:10%;margin-top:10%;">
+                                <div>
+                                    <strong>Total en mots :</strong>
+                                    <span t-field="o.amount_total_text"/>
+                                </div>
+                            </div>
+                            <div style="overflow: hidden; page-break-inside: avoid; " class="col-md-4 col-5 p-3">
+                                <table class="table table-sm"
+                                       style="border: 2px solid black; border-radius: 8px; background-color:#f0f3f4; page-break-inside: avoid; width: 100%; display: block;">
+                                    <tr>
+                                        <td>
+                                            <strong>TOTAL HT</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_untaxed"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TOTAL REMISE</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="sum(line.quantity * line.price_unit * line.discount/100 for line in o.invoice_line_ids)"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TOTAL NET HT</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="o.amount_untaxed - sum(line.quantity * line.price_unit * line.discount/100 for line in o.invoice_line_ids)"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TOTAL TVA</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_tax"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TIMBRE</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="1.0000"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TOTAL TTC</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_total"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="action_invoice_report" model="ir.actions.report">
+        <field name="name">Imprimer facturation</field>
+        <field name="type">ir.actions.report</field>
+        <field name="report_name">invoice_report.invoice_report_template</field>
+        <field name="report_file">invoice_report.invoice_report_template</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">account.move</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">action</field>
+        <field name="print_report_name">'Facture- %s - %s' % (object.partner_id.name or '', object.name)</field>
+
+    </record>
+</odoo>

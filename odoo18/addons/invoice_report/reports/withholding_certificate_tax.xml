@@ -1,0 +1,206 @@
+<odoo>
+    <data>
+        <!-- Report action definition -->
+        <record id="action_tunisian_withholding_report" model="ir.actions.report">
+            <field name="name">Certificat de Retenue d'Impot</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">invoice_report.withholding_certificate</field>
+            <field name="report_file">invoice_report.withholding_certificate</field>
+            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_header_template">
+            <t t-call="web.html_container">
+                <div class="header" style="padding: 10px; border-bottom: 3px solid black;">
+                    <div class="row">
+                        <!-- Left Side - Empty (Optional) -->
+                        <div class="col-4">
+
+                            <div style="font-size: 16px; font-style: italic; color: #333; margin-top: 5px;">
+                                <strong>REPUBLIQUE TUNISIENNE MINISTERE DES FINANCES</strong>
+
+                                <br/>
+
+                                <strong>DIRECTION GENERALE DU CONTROLE FISCAL</strong>
+
+                                <br/>
+                            </div>
+                        </div>
+
+                        <!-- Center - Logo and Slogan -->
+                        <div class="col-4" style="text-align: left;">
+
+                        </div>
+
+                        <div class="col-4">
+                            <div style="font-size: 16px; font-style: italic; color: #333; margin-top: 5px;">
+
+                                <strong>CERTIFICAT DE RETENUE D'IMPOT SUR LE REVENUE</strong>
+
+                                <strong>OU D'IMPOT SUR LES SOCIETES</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page">
+                    <t t-raw="0"/>
+                </div>
+            </t>
+        </template>
+
+
+        <!-- Report template -->
+        <template id="withholding_certificate">
+            <t t-call="web.html_container">
+                <t t-set="company" t-value="docs.company_id"/>
+
+                <t t-call="account.external_layout_standard_updated">
+                    <t t-call="invoice_report.report_header_template">
+                        <t t-foreach="docs" t-as="o">
+                            <div class="page" style="font-family: Arial; padding: 20px;">
+
+
+                                <!-- Section A - Payer Information -->
+                                <div class="border p-3 mb-3">
+                                    <h4>A - PERSONNE OU ORGANISME PAYEUR</h4>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <p>Dénomination de la personne ou de l'organisme payeur:</p>
+                                            <p>
+                                                <span t-field="o.company_id.name"/>
+                                            </p>
+                                            <p>Adresse:
+                                                <span t-field="o.company_id.street"/>
+                                            </p>
+                                        </div>
+                                        <div class="col-4">
+                                            <table class="table table-sm table-bordered">
+                                                <tr>
+                                                    <th>Matricule fiscal</th>
+                                                    <th>Code TVA</th>
+                                                    <th>Code catégorie</th>
+                                                    <th>N° Etab</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span t-field="o.company_id.vat"/>
+                                                    </td>
+                                                    <td>N</td>
+                                                    <td>M</td>
+                                                    <td>000</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section B - Withholding Information -->
+                                <div class="border p-3 mb-3">
+                                    <h4>B- RETENUES EFFECTUEES SUR</h4>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>BRUT</th>
+                                                <th>RETENUE</th>
+                                                <th>NET</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Marché 1 %</td>
+                                                <td>
+                                                    <span t-esc="o.amount_total"
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="o.amount_total * 0.01"
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="o.amount_total * 0.99"
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Général</td>
+                                                <td>
+                                                    <span t-esc="o.amount_total"
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="o.amount_total * 0.01"
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="o.amount_total * 0.99"
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Section C - Beneficiary Information -->
+                                <div class="border p-3 mb-3">
+                                    <h4>C- BENEFICIAIRE</h4>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <p>Nom, prénom ou raison sociale:
+                                                <span t-field="o.partner_id.name"/>
+                                            </p>
+                                            <p>Adresse:
+                                                <span t-field="o.partner_id.street"/>
+                                            </p>
+                                        </div>
+                                        <div class="col-4">
+                                            <table class="table table-sm table-bordered">
+                                                <tr>
+                                                    <th>Matricule fiscal</th>
+                                                    <th>Code TVA</th>
+                                                    <th>Code catégorie</th>
+                                                    <th>N° Etab</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span t-field="o.partner_id.vat"/>
+                                                    </td>
+                                                    <td>A</td>
+                                                    <td>M</td>
+                                                    <td>000</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="mt-4">
+                                    <p style="font-style: italic;">Je soussigné, certifie exacts les renseignements
+                                        figurant
+                                        sur le présent certificat et m'expose aux sanctions prévues par la loi pour
+                                        toutes
+                                        inexactitudes.
+                                    </p>
+                                    <div class="row mt-4">
+                                        <div class="col-6">
+                                            <p>A<span t-field="o.company_id.city"/>, le
+                                                <span t-field="o.date" t-options='{"format": "dd MMM yyyy"}'/>
+                                            </p>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <p>Cachet et signature du payeur</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

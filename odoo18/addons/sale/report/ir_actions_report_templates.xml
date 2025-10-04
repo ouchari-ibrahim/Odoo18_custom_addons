@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document">
+        <t t-set="company" t-value="doc.company_id" />
+
+        <t t-call="account.external_layout_standard_updated">
+            <t t-call="account.report_header_template">
+                <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)" />
+                <t t-set="forced_vat" t-value="doc.fiscal_position_id.foreign_vat" /> <!-- So that it
+                appears in the footer of the report instead of the company VAT if it's set -->
+                <t t-set="address">
+                    <div t-field="doc.partner_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                    <p t-if="doc.partner_id.vat">
+                        <t t-if="doc.company_id.account_fiscal_country_id.vat_label"
+                            t-out="doc.company_id.account_fiscal_country_id.vat_label" />
+                <t
+                            t-else="">Tax ID</t>: <span t-field="doc.partner_id.vat" />
+                    </p>
+                </t>
+                <t
+                    t-if="doc.partner_shipping_id == doc.partner_invoice_id
+                             and doc.partner_invoice_id != doc.partner_id
+                             or doc.partner_shipping_id != doc.partner_invoice_id">
+                    <t t-set="information_block">
+                        <strong>
+                            <t t-if="doc.partner_shipping_id == doc.partner_invoice_id">
+                                Invoicing and Shipping Address
+                            </t>
+                            <t t-else="">
+                                Invoicing Address
+                            </t>
+                        </strong>
+                        <div t-field="doc.partner_invoice_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
+                        <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">
+                            <strong>Shipping Address</strong>
+                            <div t-field="doc.partner_shipping_id"
+                                t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
+                        </t>
+                    </t>
+                </t>
+                <div class="page">
+                    <div class="row justify-content-between">
+                        <div class="col-md-5 col-5 p-2"
+                            style="font-size: 1.2rem; line-height: 1.5; border: 2px solid black; border-radius: 16px; background-color: #f9f9f9;">
+                            <div>
+                                <strong>Facture Proforma :</strong>
+                                <span t-field="doc.name" />
+                            </div>
+                            <div>
+                                <strong>Date de Facture :</strong>
+                                <span t-field="doc.date_order" />
+                            </div>
+                            <div>
+                                <strong>Affaire suivie par :</strong>
+                                <span t-field="user.name" />
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-6 p-2"
+                            style="font-size: 1.2rem; line-height: 1.5; border: 2px solid black; border-radius: 8px; background-color: #f9f9f9;">
+                            <div>
+                                <strong>A l'attention de :</strong>
+                                <span t-field="doc.partner_id.name" />
+                            </div>
+                            <strong>Address:</strong>
+                            <div t-if="doc.partner_id">
+                                <span t-field="doc.partner_id.street" />
+                                <span t-if="doc.partner_id.street2">, <span
+                                        t-field="doc.partner_id.street2" /></span>
+                                <span t-if="doc.partner_id.city">, <span
+                                        t-field="doc.partner_id.city" /></span>
+                                <span t-if="doc.partner_id.state_id">, <span
+                                        t-field="doc.partner_id.state_id.name" /></span>
+                                <span t-if="doc.partner_id.zip">, <span t-field="doc.partner_id.zip" /></span>
+                            </div>
+
+                            <div>
+                                <strong>Email :</strong>
+                                <span t-field="doc.partner_id.email" />
+                            </div>
+                            <div>
+                                <strong>ID fiscale :</strong>
+                                <span t-field="doc.partner_id.vat" />
+                            </div>
+                            <div>
+                                <strong>Téléphone :</strong>
+                                <span t-field="doc.partner_id.phone" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="oe_structure" />
+
+                    <t t-set="is_proforma"
+                        t-value="env.context.get('proforma', False) or is_pro_forma" />
+                    <t t-set="layout_document_title">
+                        <span t-if="is_proforma">Pro-Forma Invoice # </span>
+                        <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
+                        <span t-else="">Order # </span>
+                        <span t-field="doc.name">SO0000</span>
+                    </t>
+
+                    <div class="row mb-4" id="informations">
+                        <div t-if="doc.client_order_ref" class="col" name="informations_reference">
+                            <strong>Your Reference</strong>
+                            <div t-field="doc.client_order_ref">SO0000</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Is there a discount on at least one line? -->
+                    <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()" />
+                    <t t-set="display_discount" t-value="any(l.discount for l in lines_to_report)" />
+
+                    <div class="oe_structure"></div>
+                    <table class="o_has_total_table table o_main_table table-borderless"
+                        style="width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    border: 3px solid black;
+    overflow: hidden;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    Ref
+                                </th>
+                                <th
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    Image
+                                </th>
+                                <th
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    Designation
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    Qte
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    PUHT
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    Rem (%)
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    PU NET HT
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    Mnt NET HT
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; border-right: 2px solid black; padding: 8px;">
+                                    TVA (%)
+                                </th>
+                                <th class="text-right"
+                                    style="border-bottom: 2px solid black; padding: 8px;">Mnt TTC
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.order_line" t-as="line"
+                                t-if="line.product_id"
+                                style="border: none;">
+                                <td
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span t-field="line.product_id.default_code" />
+                                </td>
+
+                                <td
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <t t-if="line.product_id.image_1920">
+                                        <img
+                                            t-att-src="image_data_uri(line.product_id.image_1920)"
+                                            style="max-height: 40pt; max-width: 100%;"
+                                            alt="Product Logo" />
+                                    </t>
+                                </td>
+
+                                <td
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span t-field="line.product_id.name" />
+                                </td>
+                                <td class="text-right"
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span t-field="line.product_uom_qty"
+                                    t-options='{"widget": "float", "precision": 3}'/>
+                                </td>
+                                <td class="text-right"
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span t-field="line.price_unit"
+                                    t-options='{"widget": "float", "precision": 3}'/>
+                                </td>
+                                <td class="text-right"
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span t-esc="str(line.discount) + '%'" />
+                                </td>
+
+                                <td class="text-right"
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span
+                                        t-esc="line.price_unit * (1 - (line.discount or 0.0) / 100.0)"
+                                        t-options='{"widget": "float", "precision": 3}' />
+                                </td>
+                                <td class="text-right"
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span t-field="line.price_subtotal"
+                                    t-options='{"widget": "float", "precision": 3}'/>
+                                </td>
+                                <td class="text-right"
+                                    style="padding: 6px; border-right: 2px solid black; border-top: none; border-bottom: none;">
+                                    <span
+                                        t-esc="line.tax_id[0].amount if line.tax_id else 0"
+                                        t-options='{"widget": "float", "precision": 0}' />%
+                                </td>
+                                <td class="text-right"
+                                    style="padding: 2px; border-top: none; border-bottom: none;">
+                                    <span t-field="line.price_total"
+                                        t-options='{"widget": "float", "precision": 3}' />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+<div class="clearfix" name="so_total_summary" style="margin-top:50px;">
+    <div id="total" class="row mt-n3" name="total">
+        <!-- Left side: Montant en lettres -->
+        <div class="col-5">
+            <div style="border: 2px solid #333; border-radius: 15px; padding: 20px; background-color: #f8f9fa; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <strong>Montant en lettres:</strong><br/>
+                <em style="font-style: italic; color: #666;">
+                    <span t-esc="doc.currency_id.amount_to_text(doc.amount_total)" />
+                </em>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="col-2"></div>
+
+        <!-- Right side: Total summary -->
+        <div class="col-5">
+            <div style="border: 2px solid #333; border-radius: 15px; padding: 20px; background-color: #f8f9fa; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <table class="o_total_table table table-borderless">
+                    <!-- Tax totals -->
+                    <t t-call="sale.document_tax_totals">
+                        <t t-set="tax_totals" t-value="doc.tax_totals" />
+                        <t t-set="currency" t-value="doc.currency_id" />
+                    </t>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <div class="oe_structure"></div>
+
+                    <!-- 3. SIGNATURE SECTION - Left: Company signature, Right: Client signature -->
+                    <div style="margin-top: 60px; margin-bottom: 40px;">
+                        <div class="row">
+                            <!-- Left side: Company signature -->
+                            <div class="col-6" style="text-align: center; border-right: 1px solid #ccc;">
+                                <div style="margin-bottom: 20px;" name="signature">
+                                    <strong>Signature et cachet</strong>
+                                </div>
+
+                            </div>
+
+                            <!-- Right side: Client signature -->
+                            <div class="col-6" style="text-align: center;">
+                                <div style="margin-bottom: 20px;">
+                                    <strong>Signature Client</strong>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span t-field="doc.note"
+                            t-attf-style="#{'text-align:justify;text-justify:inter-word;' if doc.company_id.terms_type != 'html' else ''}"
+                            name="order_note" />
+                        <p t-if="not is_html_empty(doc.payment_term_id.note)">
+                            <span t-field="doc.payment_term_id.note">The payment should also be
+                                transmitted with love</span>
+                        </p>
+                        <div class="oe_structure" />
+                        <p
+                            t-if="doc.fiscal_position_id and not is_html_empty(doc.fiscal_position_id.sudo().note)"
+                            id="fiscal_position_remark">
+                            <strong>Fiscal Position Remark:</strong>
+                            <span t-field="doc.fiscal_position_id.sudo().note">No further
+                                requirements for this payment</span>
+                        </p>
+                    </div>
+                    <div class="oe_structure" />
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_saleorder_raw">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sale.report_saleorder_document" t-lang="doc.partner_id.lang" />
+            </t>
+        </t>
+    </template>
+
+    <template id="report_saleorder">
+        <t t-call="sale.report_saleorder_raw" />
+    </template>
+
+    <template id="report_saleorder_pro_forma">
+        <t t-call="web.html_container">
+            <t t-set="is_pro_forma" t-value="True" />
+            <t t-set="docs" t-value="docs.with_context(proforma=True)" />
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sale.report_saleorder_document" t-lang="doc.partner_id.lang" />
+            </t>
+        </t>
+    </template>
+
+    <!-- Allow edits (e.g. studio) without changing the often inherited base template -->
+    <template id="document_tax_totals" inherit_id="account.document_tax_totals_template"
+        primary="True"></template>
+
+    <template id="quote_document_layout_preview">
+        <t t-call="web.html_preview_container">
+            <t t-call="sale.report_saleorder_document" />
+        </t>
+    </template>
+
+</odoo>

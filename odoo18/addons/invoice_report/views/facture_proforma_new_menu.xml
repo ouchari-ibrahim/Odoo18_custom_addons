@@ -1,0 +1,24 @@
+<odoo>
+    <!-- Inherit the menu item to change its name from 'Quotations' to 'Facture ProForma' -->
+    <record id="sale.menu_sale_quotations" model="ir.ui.menu">
+        <field name="name">FACTURE PROFORMA</field>
+    </record>
+    <!-- Modify the action for the Quotations menu -->
+    <!-- Inherit the view_quotation_tree_with_onboarding and change the name to Facture ProForma -->
+    <record id="view_quotation_tree_with_onboarding_inherit" model="ir.ui.view">
+        <field name="name">sale.order.tree.view.facture.proforma</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <!-- Change the name of the view (the string shown in the menu) -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Facture ProForma</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="name">FACTURE PROFORMA</field>
+    </record>
+
+</odoo>

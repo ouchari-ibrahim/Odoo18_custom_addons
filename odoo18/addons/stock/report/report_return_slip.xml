@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="stock.report_return_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id" />
+
+                <t t-call="account.external_layout_standard_updated">
+                    <t t-call="account.report_header_template">
+
+                        <div class="page">
+
+                            <div class="row justify-content-between">
+                                <div class="col-md-5 col-5 p-2"
+                                    style="font-size: 1.2rem; line-height: 1.5; border: 2px solid black; border-radius: 16px; background-color: #f9f9f9;">
+                                    <div>
+                                        <strong>Bon De Retour :</strong>
+                                        <span t-field="o.name" />
+                                    </div>
+                                    <div>
+                                        <strong>Date de retour :</strong>
+                                        <span t-field="o.scheduled_date" />
+                                    </div>
+                                    <div>
+                                        <strong>Affaire suivie par :</strong>
+                                        <span t-field="user.name" />
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-6 p-2"
+                                    style="font-size: 1.2rem; line-height: 1.5; border: 2px solid black; border-radius: 8px; background-color: #f9f9f9;">
+                                    <div>
+                                        <strong>A l'attention de :</strong>
+                                        <span t-field="o.partner_id.name" />
+                                    </div>
+
+                                    <strong>Address:</strong>
+                                    <div t-if="o.partner_id">
+                                        <span t-field="o.partner_id.street" />
+                                        <span t-if="o.partner_id.street2">, <span
+                                                t-field="o.partner_id.street2" /></span>
+                                        <span t-if="o.partner_id.city">, <span
+                                                t-field="o.partner_id.city" /></span>
+                                        <span t-if="o.partner_id.state_id">, <span
+                                                t-field="o.partner_id.state_id.name" /></span>
+                                        <span t-if="o.partner_id.zip">, <span
+                                                t-field="o.partner_id.zip" /></span>
+                                    </div>
+
+                                    <div>
+                                        <strong>Email :</strong>
+                                        <span t-field="o.partner_id.email" />
+                                    </div>
+                                    <div>
+                                        <strong>ID fiscale :</strong>
+                                        <span t-field="o.partner_id.vat" />
+                                    </div>
+                                    <div>
+                                        <strong>Téléphone :</strong>
+                                        <span t-field="o.partner_id.phone" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Report Header -->
+                            <div class="oe_structure" />
+                            <div class="row mt-4">
+                                <div class="col-12 text-center">
+                                    <h1 class="font-weight-bold">Return Slip</h1>
+                                    <h2 class="font-weight-bold">Bon de livraison: <span
+                                            t-field="o.origin" /></h2>
+
+                                    <h3 t-out="'Return of ' + o.name">Return of Default Return Name</h3>
+                                </div>
+                            </div>
+
+                            <!-- Document Details Section -->
+                            <div class="row mt-4">
+                                <div class="col-8">
+                                    <p class="lead">Please include this document inside your return
+                                        parcel. The parcel should be sent to the address below:</p>
+                                    <div class="address-block">
+                                        <strong>Shipping Address:</strong>
+                                        <br />
+                                        <span t-field="o.location_id.warehouse_id.partner_id"
+                                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'>Demo
+                                            Address and Name</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 text-center mt-4">
+                                    <h4 class="text-muted">Barcode Information</h4>
+                                    <div>
+                                        <!-- Barcode for Return -->
+                                        <span t-field="o.name"
+                                            t-options="{'widget': 'barcode', 'img_style': 'width:100%;'}">Default
+                                            Barcode Name</span>
+                                        <p class="font-weight-bold mt-2">Return Reference</p>
+                                    </div>
+                                    <div style="margin-top: 150px;">
+                                        <!-- OBTRETU Barcode -->
+                                        <span t-out="'OBTRETU'"
+                                            t-options="{'widget': 'barcode', 'img_style': 'width:100%;'}">Default
+                                            OBTRETU Barcode</span>
+                                        <p class="mt-2">OBTRETU</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="oe_structure" />
+                        </div>
+
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="return_label_report" model="ir.actions.report">
+        <field name="name">Return slip</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock.report_return_slip</field>
+        <field name="report_file">return_slip</field>
+        <field name="binding_model_id" ref="model_stock_picking" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
