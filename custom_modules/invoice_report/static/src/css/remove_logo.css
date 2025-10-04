@@ -1,0 +1,8 @@
+.o_main_navbar .navbar-brand img {
+    display: none !important;
+}
+
+/* Alternative - hide the entire brand section */
+.o_main_navbar .navbar-brand {
+    display: none !important;
+}

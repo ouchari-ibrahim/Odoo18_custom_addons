@@ -1,0 +1,77 @@
+<odoo>
+<template id="return_note_report_template">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-set="company" t-value="o.company_id"/>
+            <t t-call="web.external_layout_standard">
+                <div class="page" style="page-break-inside: avoid;">
+                    <!-- Header and Company Details -->
+                    <h3>Bon de Retour</h3>
+                  
+                  
+                    <!-- Add Content Specific to Bon de Retour -->
+                    <!-- Order Lines Table -->
+                    <table class="table table-sm mt-4">
+                        <!-- Same style as Sale Order Report -->
+                        <thead>
+                            <tr>
+                                <th>Ref</th>
+                                <th>Image</th>
+                                <th>Designation</th>
+                                <th class="text-right">Qte Retour</th>
+                                <th class="text-right">Motif Retour</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.move_ids_without_package" t-as="line">
+                                <td>
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                <td>
+                                    <img t-if="line.product_id.image_128"
+                                         t-att-src="image_data_uri(line.product_id.image_128)"
+                                         style="max-height: 80px;"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="line.product_uom_qty"/> <!-- Adjust quantity logic as needed -->
+                                </td>
+                                <td class="text-right">
+                                    <span> - </span> <!-- Placeholder for return reasons -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Footer Section -->
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <strong>Cachet Et Signature :</strong>
+                        </div>
+                        <div class="col-6 text-end">
+                            <strong>Signature Client :</strong>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+
+  <record id="action_return_note_report" model="ir.actions.report">
+    <field name="name">Imprimer Bon de Return</field>
+    <field name="type">ir.actions.report</field>
+    <field name="report_name">invoice_report.return_note_report_template</field>
+    <field name="report_file">invoice_report.return_note_report_template</field>
+
+    <field name="report_type">qweb-pdf</field>
+    <field name="model">stock.picking</field>
+    <field name="binding_model_id" ref="stock.model_stock_picking"/>
+    <field name="binding_type">action</field>
+            <field name="print_report_name">'Bon de retour - %s - %s' % (object.partner_id.name or '', object.name)</field>
+
+</record>
+
+</odoo>
