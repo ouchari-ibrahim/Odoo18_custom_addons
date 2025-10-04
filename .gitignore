@@ -1,16 +1,3 @@
-# Ignore everything by default
-*
-
-# Allow custom modules
-!custom_modules/
-!custom_modules/**
-
-# Allow the odoo18/addons folder
-odoo18/
-
-# Ignore other odoo18 files
-odoo18/*
-
 # Ignore Python compiled files
 *.pyc
 __pycache__/
@@ -38,3 +25,12 @@ __pycache__/
 *.sublime-workspace
 *.DS_Store
 *.iml
+
+# Ignore everything in odoo18
+odoo18/*
+
+# Except addons folder
+!odoo18/addons/
+
+# Allow custom modules
+custom_modules/
