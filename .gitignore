@@ -1,16 +1,21 @@
-# Ignore everything
+# Ignore everything by default
 *
 
-# But do track these folders
+# Allow custom modules
 !custom_modules/
 !custom_modules/**
 
-!odoo18/addons/
-!odoo18/addons/**
+# Allow the odoo18/addons folder
+odoo18/
 
-# Ignore typical junk
+# Ignore other odoo18 files
+odoo18/*
+
+# Ignore Python compiled files
 *.pyc
 __pycache__/
+
+# Ignore logs and temp files
 *.log
 *.swp
 *.swo
@@ -25,6 +30,8 @@ __pycache__/
 *.dump
 *.sql
 *.db
+
+# Ignore editor/project-specific files
 .idea/
 .vscode/
 *.sublime-project
