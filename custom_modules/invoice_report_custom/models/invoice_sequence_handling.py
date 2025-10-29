@@ -19,5 +19,5 @@ class AccountInvoice(models.Model):
 
     def action_generate_report_fr_facture(self):
         # Trigger the report generation for this invoice
-        report_action = self.env.ref('invoice_report.action_invoice_report')
+        report_action = self.env.ref('invoice_report_custom.action_invoice_report_custom')
         return report_action.report_action(self)

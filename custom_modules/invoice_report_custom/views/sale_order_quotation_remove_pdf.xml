@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_order_form_inherit_print" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.print</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="invoice_report.view_order_form_inherit_print"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_generate_report']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

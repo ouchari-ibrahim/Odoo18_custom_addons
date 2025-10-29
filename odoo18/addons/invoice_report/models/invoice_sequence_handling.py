@@ -13,6 +13,6 @@ class AccountInvoice(models.Model):
         return res
     def action_generate_report_fr_facture(self):
         # Trigger the report generation for this project
-        report_action = self.env.ref('invoice_report.action_invoice_report')
+        report_action = self.env.ref('invoice_report_custom.action_invoice_report')
         return report_action.report_action(self)
  

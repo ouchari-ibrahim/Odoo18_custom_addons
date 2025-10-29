@@ -6,7 +6,7 @@
     'summary': 'Generate PDF Reports for Factures (Invoices)',
     'author': 'Your Name',
     'license': 'LGPL-3',  # Added license key to remove warning
-    'depends': ['account', 'sale', 'stock', 'sale_management'],
+    'depends': ['account', 'sale', 'stock', 'sale_management','invoice_report'],
     'data': [
         'security/ir.model.access.csv',
         'views/facture_proforma_new_menu.xml',
@@ -21,7 +21,6 @@
         'data/invoice_sequence.xml',
         # 'views/view_picking_form_custom.xml',
         'views/view_facture.xml',
-        'views/account_move_line_view_lines_button.xml',
     ],
     'installable': True,
     'application': True,

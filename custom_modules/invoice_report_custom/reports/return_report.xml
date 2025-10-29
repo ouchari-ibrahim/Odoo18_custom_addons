@@ -63,8 +63,8 @@
   <record id="action_return_note_report" model="ir.actions.report">
     <field name="name">Imprimer Bon de Return</field>
     <field name="type">ir.actions.report</field>
-    <field name="report_name">invoice_report.return_note_report_template</field>
-    <field name="report_file">invoice_report.return_note_report_template</field>
+    <field name="report_name">invoice_report_custom.return_note_report_template</field>
+    <field name="report_file">invoice_report_custom.return_note_report_template</field>
 
     <field name="report_type">qweb-pdf</field>
     <field name="model">stock.picking</field>

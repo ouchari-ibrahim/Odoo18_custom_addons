@@ -4,20 +4,12 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header" position="inside">
-                <button name="action_generate_report_fr_facture"
-                        string="Imprimer Facture"
-                        type="object"
-                        class="btn-primary"
-                        icon="fa-print"/>
-
-            </xpath>
 
 
             <xpath expr="//group" position="after">
                 <group>
 <!--                    <field name="apply_timbre"/>-->
-                    <field name="report_without_image"/>
+                    <field name="report_without_image" invisible="1"/>
                     <field name="reduced_amount" invisible="1"/>
                     <field name="show_reduction" invisible="1"/>
 

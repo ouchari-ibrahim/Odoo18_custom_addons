@@ -78,7 +78,7 @@ class SaleOrderAmount(models.Model):
 
     def action_generate_report(self):
         """Trigger the report generation for this project."""
-        report_action = self.env.ref('invoice_report.action_sale_order_report')
+        report_action = self.env.ref('invoice_report_custom.action_sale_order_report')
         return report_action.report_action(self)
 
 class PickingCustom(models.Model):
@@ -86,10 +86,10 @@ class PickingCustom(models.Model):
 
     def action_generate_report_bon_de_livraison(self):
         # Trigger the report generation for this project
-        report_action = self.env.ref('invoice_report.action_delivery_note_report')
+        report_action = self.env.ref('invoice_report_custom.action_delivery_note_report')
         return report_action.report_action(self)
     def action_generate_report_bon_de_return(self):
         # Trigger the report generation for this project
-        report_action = self.env.ref('invoice_report.action_return_note_report')
+        report_action = self.env.ref('invoice_report_custom.action_return_note_report')
         return report_action.report_action(self)
     

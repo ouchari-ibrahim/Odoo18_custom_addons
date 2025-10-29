@@ -2,7 +2,7 @@ from odoo import models, api
 from num2words import num2words
 
 class CustomInvoiceReport(models.AbstractModel):
-    _name = 'report.invoice_report.invoice_report_template'
+    _name = 'report.invoice_report_custom.invoice_report_template'
     _description = 'Custom Invoice Report'
 
     @api.model
