@@ -9,7 +9,7 @@
       >
         <!-- Custom Logo - Added before Apps Menu -->
         <a href="#" class="o_menu_brand d-flex align-items-center me-3 text-decoration-none">
-          <img src="/custom_nav_logo/static/src/img/tnpos.png"
+          <img src="/web/static/img/tnpos.png"
                alt="TNPOS"
                style="height: 30px; width: auto;"/>
         </a>
@@ -124,7 +124,7 @@
           <nav class="o_burger_menu_content flex-grow-1 flex-shrink-1 overflow-auto o_burger_menu_app">
                 <div t-if="!state.isAllAppsMenuOpened and currentApp" class="d-flex align-items-center m-3 mb-0">
                   <!-- Custom logo in mobile sidebar -->
-                  <img style="height: 2em;" src="/custom_nav_logo/static/src/img/tnpos.png" class="o_app_icon me-2" alt="TNPOS"/>
+                  <img style="height: 2em;" src="/web/static/img/tnpos.png" class="o_app_icon me-2" alt="TNPOSS"/>
                   <span class="fs-4 fw-bolder">TNPOS</span>
                 </div>
                 <ul class="list-unstyled py-2 ps-0 mb-0">
