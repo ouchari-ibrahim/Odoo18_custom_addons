@@ -54,7 +54,7 @@
                             </div>
                             <div>
                                 <strong>Affaire suivie par :</strong>
-                                <span t-field="user.name" />
+    <span t-field="doc.user_id.name"/>
                             </div>
                         </div>
                         <div class="col-md-5 col-6 p-2"

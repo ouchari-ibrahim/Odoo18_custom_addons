@@ -656,7 +656,7 @@
                 <strong>Imprimé le :</strong>
                 <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')" />
                 <strong>par :</strong>
-                <span t-esc="user.name" />
+<span t-field="env.user.name"/>
             </div>
 
             <!-- Company Contact Info -->
@@ -701,6 +701,8 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-set="company" t-value="o.company_id" />
                     <t t-call="account.external_layout_standard_updated">
+                            <t t-set="o" t-value="o"/>
+
                         <t t-call="account.report_header_template">
 
                             <div class="page" style="page-break-inside: avoid;">
